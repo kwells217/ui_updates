@@ -282,7 +282,7 @@ async function fetchAll(forceRefresh = false) {
 
   // Use browser memory cache if available and not forcing refresh
   if (cachedCatalog && !forceRefresh) {
-    ({ allWorkspaces, allReports, allDatasets, allConnections } = cachedCatalog);
+    ({ allWorkspaces, allReports, allDatasets, allConnections, allPermissions } = cachedCatalog);
     renderAll();
     return;
   }
@@ -302,7 +302,7 @@ async function fetchAll(forceRefresh = false) {
     allPermissions = data.permissions || [];
 
     // Store in browser memory cache
-    cachedCatalog = { allWorkspaces, allReports, allDatasets, allConnections };
+    cachedCatalog = { allWorkspaces, allReports, allDatasets, allConnections, allPermissions };
 
     const source = data.source === 'cache' ? '✓ Cached' : '✓ Live';
     document.getElementById('connStatus').textContent = source;
@@ -707,7 +707,9 @@ function exportCSV(tableId, name) {
 }
 
 function disconnect() {
-  allReports = []; allDatasets = []; allWorkspaces = []; allPermissions = [];
+  allReports = []; allDatasets = []; allWorkspaces = []; allPermissions = []; allConnections = [];
+  cachedCatalog = null;
+  clearInterval(progressTimer);
   document.getElementById('authPanel').style.display = 'block';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('connStatus').className = 'status-badge';
